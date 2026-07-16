@@ -1,0 +1,226 @@
+<!doctype html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="BtcTurk canlı verileriyle çalışan kişisel kripto yatırım asistanı.">
+    <title>Crypto Radar Assistant</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <script defer src="{{ url_for('static', filename='js/script.js') }}"></script>
+</head>
+<body>
+    <header class="topbar">
+        <a class="brand" href="/" aria-label="Crypto Radar Assistant ana sayfa">
+            <span class="brand-mark" aria-hidden="true">◈</span>
+            <span>
+                <small>BTC TÜRK • CANLI PİYASA</small>
+                <strong>Crypto Radar <em>Assistant</em></strong>
+            </span>
+        </a>
+
+        <div class="app-status" aria-live="polite">
+            <span id="connectionDot" class="connection-dot"></span>
+            <span id="connectionText">Bağlanıyor…</span>
+            <time id="clock">--:--:--</time>
+        </div>
+    </header>
+
+    <main class="container">
+        <section class="welcome-row">
+            <div>
+                <p class="section-kicker">GÜNLÜK ÖZET</p>
+                <h1>Bugün ne yapmalıyım?</h1>
+                <p class="subtitle">Portföyünü ve piyasayı tek bakışta takip et.</p>
+            </div>
+            <button id="refreshButton" class="button button-secondary" type="button">
+                Verileri yenile
+            </button>
+        </section>
+
+        <section class="overview-grid" aria-label="Portföy özeti">
+            <article class="overview-card">
+                <span class="overview-icon blue" aria-hidden="true">₺</span>
+                <div>
+                    <p>Portföyümün değeri</p>
+                    <strong id="portfolioValue">0,00 ₺</strong>
+                </div>
+            </article>
+
+            <article class="overview-card">
+                <span class="overview-icon green" aria-hidden="true">↗</span>
+                <div>
+                    <p>Toplam kâr / zarar</p>
+                    <strong id="totalProfit">0,00 ₺</strong>
+                    <small id="totalProfitPercent">0,00%</small>
+                </div>
+            </article>
+
+            <article class="overview-card">
+                <span class="overview-icon purple" aria-hidden="true">◫</span>
+                <div>
+                    <p>Açık işlem</p>
+                    <strong id="openPositionCount">0</strong>
+                    <small>aktif pozisyon</small>
+                </div>
+            </article>
+
+            <article class="overview-card">
+                <span id="riskIcon" class="overview-icon orange" aria-hidden="true">!</span>
+                <div>
+                    <p>Portföy riski</p>
+                    <strong id="riskLevel">Düşük</strong>
+                    <small id="riskDescription">Açık işlem bulunmuyor</small>
+                </div>
+            </article>
+        </section>
+
+        <section class="ai-summary panel" aria-labelledby="aiSummaryTitle">
+            <div class="ai-heading">
+                <span class="ai-icon" aria-hidden="true">✦</span>
+                <div>
+                    <p class="section-kicker">AKILLI DURUM ÖZETİ</p>
+                    <h2 id="aiSummaryTitle">Radarın bugünkü notları</h2>
+                </div>
+            </div>
+
+            <ul id="aiInsights" class="insight-list">
+                <li class="insight neutral">Piyasa verileri analiz ediliyor…</li>
+            </ul>
+        </section>
+
+        <section class="market-grid" aria-label="Piyasa hareketleri">
+            <section class="panel market-panel" aria-labelledby="gainersTitle">
+                <div class="panel-title-row">
+                    <div>
+                        <p class="section-kicker positive-text">YÜKSELENLER</p>
+                        <h2 id="gainersTitle">En çok yükselen 5 coin</h2>
+                    </div>
+                    <span class="market-direction positive-bg">↗</span>
+                </div>
+                <div id="gainersList" class="market-list">
+                    <p class="loading-text">Veriler yükleniyor…</p>
+                </div>
+            </section>
+
+            <section class="panel market-panel" aria-labelledby="losersTitle">
+                <div class="panel-title-row">
+                    <div>
+                        <p class="section-kicker negative-text">DÜŞENLER</p>
+                        <h2 id="losersTitle">En çok düşen 5 coin</h2>
+                    </div>
+                    <span class="market-direction negative-bg">↘</span>
+                </div>
+                <div id="losersList" class="market-list">
+                    <p class="loading-text">Veriler yükleniyor…</p>
+                </div>
+            </section>
+        </section>
+
+        <section class="positions-section" aria-labelledby="positionsTitle">
+            <div class="section-header">
+                <div>
+                    <p class="section-kicker">PORTFÖYÜM</p>
+                    <h2 id="positionsTitle">Aktif pozisyonlar</h2>
+                    <p class="subtitle">Açık işlemlerinin anlık performansı.</p>
+                </div>
+                <span id="positionCountBadge" class="count-badge">0 pozisyon</span>
+            </div>
+
+            <div id="positionCards" class="position-grid">
+                <div class="empty-positions">
+                    <span>◎</span>
+                    <h3>Henüz açık işlem yok</h3>
+                    <p>Radar listesinden uygun bir coin seçerek ilk sanal işlemini açabilirsin.</p>
+                </div>
+            </div>
+        </section>
+
+        <section class="panel history-panel" aria-labelledby="historyTitle">
+            <div class="section-header">
+                <div>
+                    <p class="section-kicker">İŞLEM GEÇMİŞİ</p>
+                    <h2 id="historyTitle">Portföyüm</h2>
+                    <p class="subtitle">Kapanan sanal alım ve satım işlemlerin.</p>
+                </div>
+                <button id="clearHistoryButton" class="text-button" type="button">
+                    Geçmişi temizle
+                </button>
+            </div>
+
+            <div class="table-scroll">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Tarih</th>
+                            <th>Parite</th>
+                            <th>Alış</th>
+                            <th>Satış</th>
+                            <th>Kâr / zarar</th>
+                        </tr>
+                    </thead>
+                    <tbody id="historyTable">
+                        <tr>
+                            <td colspan="5" class="empty-table">
+                                Henüz kapanan işlem bulunmuyor.
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <dialog id="tradeDialog" class="trade-dialog">
+        <form id="tradeForm" method="dialog">
+            <div class="dialog-top">
+                <div>
+                    <p class="section-kicker">YENİ SANAL İŞLEM</p>
+                    <h2 id="tradeTitle">İşlem aç</h2>
+                </div>
+                <button id="closeDialogButton" class="close-button" type="button" aria-label="Pencereyi kapat">
+                    ×
+                </button>
+            </div>
+
+            <div class="current-price">
+                <span>Anlık fiyat</span>
+                <strong id="tradeCurrentPrice">—</strong>
+            </div>
+
+            <label for="amountInput">Kaç TL yatırıyorsun?</label>
+            <input id="amountInput" type="number" min="1" step="any" placeholder="Örnek: 5000" required>
+
+            <div class="input-pair">
+                <div>
+                    <label for="targetInput">Hedef kâr (%)</label>
+                    <input id="targetInput" type="number" min="0.1" step="0.1" value="10" required>
+                </div>
+                <div>
+                    <label for="stopInput">Stop loss (%)</label>
+                    <input id="stopInput" type="number" min="0.1" max="99" step="0.1" value="5" required>
+                </div>
+            </div>
+
+            <p class="form-note">Hedef ve stop fiyatı, işlemi açtığında otomatik hesaplanır.</p>
+
+            <div class="dialog-actions">
+                <button id="cancelDialogButton" class="button button-secondary" type="button">Vazgeç</button>
+                <button class="button" type="submit">İşlemi aç</button>
+            </div>
+        </form>
+    </dialog>
+
+    <div id="toast" class="toast" role="status" aria-live="polite"></div>
+
+    <footer class="footer">
+        <div>
+            <strong>Crypto Radar Assistant</strong>
+            <span>Yatırım tavsiyesi değildir. Sanal portföy takibi sunar.</span>
+        </div>
+        <div class="footer-meta">
+            <span>Version 2.0.0</span>
+            <span>Developed by <strong>Merve Kaçaranlıoğlu Topçu</strong></span>
+        </div>
+    </footer>
+</body>
+</html>
